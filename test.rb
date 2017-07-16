@@ -1,32 +1,34 @@
 #!/usr/bin/ruby
 
 require 'pg'
+require 'json'
 
 begin
 
     con = PG.connect :dbname => 'players', :user => 'squeel'
 
-=begin
-    con.exec "DROP TABLE IF EXISTS Cars"
-    con.exec "CREATE TABLE Cars(Id INTEGER PRIMARY KEY,
-        Name VARCHAR(20), Price INT)"
-    con.exec "INSERT INTO Cars VALUES(1,'Audi',52642)"
-    con.exec "INSERT INTO Cars VALUES(2,'Mercedes',57127)"
-    con.exec "INSERT INTO Cars VALUES(3,'Skoda',9000)"
-    con.exec "INSERT INTO Cars VALUES(4,'Volvo',29000)"
-    con.exec "INSERT INTO Cars VALUES(5,'Bentley',350000)"
-    con.exec "INSERT INTO Cars VALUES(6,'Citroen',21000)"
-    con.exec "INSERT INTO Cars VALUES(7,'Hummer',41400)"
-    con.exec "INSERT INTO Cars VALUES(8,'Volkswagen',21600)"
-    con.exec "INSERT INTO Cars VALUES(9,'Oldsmobile',28550)"
-=end
     sport = "Basketball"
+    #resp = con.exec "select * from "+sport
+    #resp = con.exec "select json_agg(t) from (select * from "+sport+") t"
+    #resp = con.exec "select array_to_json(array_agg(row_to_json(t))) from ( select * from Football) t"
+    x = resp
+    #puts JSON.pretty_generate(x)
+    #resp = con.exec "select json_agg(t) from (select * from "+sport+") t"
+    #my_object = { :array => [1, 2, 3, { :sample => "hash"} ], :foo => "bar" }
+    #puts JSON.pretty_generate(my_object)
+    #resp = (con.exec "SELECT row_to_json(row) from (select * from "+sport+") row")
+    #puts resp.to_json
+    #puts JSON.pretty_generate(x)
+    x.each {|row|
+        puts row
+    }
+
     # players = con.exec "select * from "+sport+" where age is not null"
     # players.each {|p|
     #     puts p
     # }
-    s = "update "+sport+" set name_brief = %s where id = %s" % ["D. A.", 2]
-    puts s
+    #s = "update "+sport+" set name_brief = %s where id = %s" % ["D. A.", 2]
+    #puts s
     #con.exec "update "+sport+" set name_brief = %s where id = %s" % [name_brief, player["id"]]
     # resp = con.exec "select first_name, last_name from "+sport+" where id = %s" % [2]
     # first = resp.field_values("first_name")[0][0].upcase
