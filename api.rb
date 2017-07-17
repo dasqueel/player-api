@@ -5,14 +5,11 @@ things to improve
 =end
 
 require 'sinatra'
-require 'sinatra/config_file'
 require 'sinatra/reloader'
 require 'pg'
 require 'json'
 
-config_file 'config.yml'
-
-con = PG.connect :dbname => settings.dbname, :user => settings.dbuser
+con = PG.connect :dbname => "players"
 
 get '/sports/:sport' do
 	content_type :json
