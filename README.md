@@ -51,10 +51,10 @@ type in new password and quit postgres term
 \q
 ```
 
-now have to update postgres con objects attributes in api.rb and api_to_postgre.rb__
-change user from nil to posgres and password from nil to your password you just typed__
-con line ~14 in api.rb__
-con line ~17 in api_to_postgres.rb__
+now have to update postgres con objects attributes in api.rb and api_to_postgre.rb <br />
+change user from nil to posgres and password from nil to your password you just typed <br />
+con line ~14 in api.rb <br />
+con line ~17 in api_to_postgres.rb <br />
 (would user config file so you only have to change once, will figure that out later)
 
 something like this
