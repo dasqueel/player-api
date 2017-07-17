@@ -1,13 +1,22 @@
+=begin
+
+a monolithic procedural script that normalizes cbs player api to a normalized object you specified
+
+1) first worry about getting each sports players into a postgres table
+
+2) then worry about handling the name_brief and average_position_age_diff after players have been added
+
+bulk inserts?
+
+=end
+
 require 'unirest'
 require 'pg'
-
-#first worry about getting each sports players into a postgres table
-#then worry about creaing the name_brief and average_position_age_diff after players have been added
 sports = ['Baseball','Football','Basketball']
 
 con = PG.connect :dbname => 'players', :user => 'squeel'
 
-
+#loop through each sport and create its own table with player members
 sports.each {|sport|
 
 	con.exec "DROP TABLE IF EXISTS "+sport
@@ -17,29 +26,32 @@ sports.each {|sport|
 					first_name VARCHAR(20),
 					last_name VARCHAR(20),
 					position VARCHAR(20),
+					team VARCHAR(20),
 					age INT,
 					average_position_age_diff INT
 					)"
 
-	apiUrl = 'http://api.cbssports.com/fantasy/players/list?version=3.0&SPORT='+sport.downcase+'&response_format=JSON'
-	resp = Unirest.get(apiUrl)
+	api_url = 'http://api.cbssports.com/fantasy/players/list?version=3.0&SPORT='+sport.downcase+'&response_format=JSON'
+	resp = Unirest.get(api_url)
 
 	players = resp.body["body"]["players"]
 
 	#also can use prepared statements, wanted to practice them
-	con.prepare(sport, 'insert into '+sport+' (first_name, last_name, position, age) values ($1, $2, $3, $4)')
+	con.prepare(sport, 'insert into '+sport+' (first_name, last_name, position, age, team) values ($1, $2, $3, $4, $5)')
+	#each through each player
 	players.each { |player|
-		con.exec_prepared(sport, [ player["firstname"], player["lastname"], player["position"], player["age" ] ])
+		con.exec_prepared(sport, [ player["firstname"].downcase, player["lastname"].downcase, player["position"].downcase, player["age" ], player["pro_team"].downcase ])
 	}
 
+	#now handle for ave_age_dif and name_brief
 	#get positions for the sport
 	res = con.exec "select distinct position from "+sport+" WHERE age is not null" #use where age is not null to get human names
 	positions = res.column_values(0)
 
 	#create a hash that stores the average age for each position
+	ave_age_of_pos = {}
 	#we will use this variable later to calculate average_position_age_diff for each player
 	puts "cacluating average age for each position for "+sport
-	ave_age_of_pos = {}
 	positions.each { |pos|
 
 		#get number of players at each position
@@ -60,7 +72,7 @@ sports.each {|sport|
 	#add average_position_age_diff to each player if they have an age field
 	#aswell add name_brief field
 	puts "cacluating average_position_age_diff for each player in "+sport
-	puts "entering name_brief for "+sport
+	puts "entering name_brief for each player in "+sport
 	players = con.exec "select * from "+sport
 	players.each {|player|
 
@@ -68,7 +80,8 @@ sports.each {|sport|
 		#only calculate average_position_age_diff, if cbs api gave a player an age
 		if player["age"] != nil
 			#cacluate the age dif the player
-			age_dif = (ave_age_of_pos[player["position"]] - Integer(player["age"])).abs
+			#if you wanted absolute difference, add .abs to next line
+			age_dif = (player["age"].to_i - ave_age_of_pos[player["position"]])
 			#update the player row with the calculated average
 			con.exec "update "+sport+" set average_position_age_diff = %s where id = %s" % [age_dif, player["id"]]
 		end
@@ -78,7 +91,7 @@ sports.each {|sport|
 		if player["first_name"] == "" #for some reason, if player["first_name"] != "", throws edge case errors
 
 		else
-			#now apply the unique name_brief field for the given player
+			#now handle the unique name_brief field for the given player
 			if sport == "Baseball"
 				#create name_brief for player name Bryce Harper -> B. H.
 				name_brief = player["first_name"][0].to_s.upcase+". "+player["last_name"][0].to_s.upcase+"."
@@ -87,13 +100,13 @@ sports.each {|sport|
 
 			if sport == "Football"
 				#create name_brief for player name Stefon Diggs -> S Diggs.
-				name_brief = player["first_name"][0].to_s.upcase+". "+player["last_name"].to_s
+				name_brief = player["first_name"][0].to_s.upcase+". "+player["last_name"].to_s.capitalize
 				con.exec "update "+sport+" set name_brief = '%s' where id = %s" % [con.escape_string(name_brief), player["id"]]
 			end
 
 			if sport == "Basketball"
 				#create name_brief for player name Karl-Anthon Towns -> Karl-Anthon T.
-				name_brief = player["first_name"].to_s+" "+player["last_name"][0].to_s.upcase+"."
+				name_brief = player["first_name"].to_s.capitalize+" "+player["last_name"][0].to_s.upcase+"."
 				con.exec "update "+sport+" set name_brief = '%s' where id = %s" % [con.escape_string(name_brief), player["id"]]
 			end
 		end

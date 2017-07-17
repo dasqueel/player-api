@@ -1,5 +1,11 @@
 #!/usr/bin/ruby
 
+=begin
+
+test ruby script to play around with code
+
+=end
+
 require 'pg'
 require 'json'
 
@@ -11,7 +17,11 @@ begin
     #resp = con.exec "select * from "+sport
     #resp = con.exec "select json_agg(t) from (select * from "+sport+") t"
     #resp = con.exec "select array_to_json(array_agg(row_to_json(t))) from ( select * from Football) t"
-    x = resp
+    #x = resp
+    #resp = con.exec "select * from Basketball"
+    resp = (con.exec "select array_to_json(array_agg(t)) from (select * from "+sport+" where age = '55') t").values
+    #resp = con.exec "select array_to_json(array_agg(t)) from (select * from "+sport+") t"
+    puts resp[0].any?
     #puts JSON.pretty_generate(x)
     #resp = con.exec "select json_agg(t) from (select * from "+sport+") t"
     #my_object = { :array => [1, 2, 3, { :sample => "hash"} ], :foo => "bar" }
@@ -19,9 +29,9 @@ begin
     #resp = (con.exec "SELECT row_to_json(row) from (select * from "+sport+") row")
     #puts resp.to_json
     #puts JSON.pretty_generate(x)
-    x.each {|row|
-        puts row
-    }
+    # x.each {|row|
+    #     puts row
+    # }
 
     # players = con.exec "select * from "+sport+" where age is not null"
     # players.each {|p|
