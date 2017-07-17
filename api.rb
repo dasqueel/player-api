@@ -7,7 +7,6 @@ things to improve
 require 'sinatra'
 require 'sinatra/reloader'
 require 'pg'
-require 'json'
 
 con = PG.connect :dbname => "players"
 
