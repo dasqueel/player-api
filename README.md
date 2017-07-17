@@ -3,7 +3,14 @@ code challenge solution
 
 Haven't used postgres that much so I decided to learn something new with postgres
 
-1) install postgresql
+1) clone repo and cd into player-api
+
+```
+git clone https://github.com/dasqueel/player-api.git
+cd player-api
+```
+
+2) install postgresql (if havent)
 
 homebrew
 
@@ -18,30 +25,37 @@ sudo apt-get update
 sudo apt-get install postgresql postgresql-contrib
 ```
 
-2) install bundler (if havent already)
+3) create a postgres database named "players"
+
+```
+createdb players
+```
+
+
+4) install bundler (if havent already)
 
 ```
 gem install bundler
 ```
 
-3) install gems
+5) install gems
 
 ```
 bundle install
 ```
 
-4) normalize cbs play api to postgres table
+6) normalize cbs play api to postgres table
 
 ```
 ruby api_to_postrgres.rb
 ```
 
-5) start sinatra app
+7) start sinatra app
 ```
 ruby app.rb
 ```
 
-6) you should be good to go, try sample queries
+8) you should be good to go, try sample queries
 
 http://localhost:4567/sports/football?position=qb&age=27
 

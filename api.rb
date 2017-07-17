@@ -47,7 +47,6 @@ get '/sports/:sport' do
 		#there are invalid params, concatenate them for a invalid message
 		#puts invalid_query_params
 		if invalid_query_params.any?
-			puts 'here'
 			invalid_message = "invalid query parameters: "
 			invalid_query_params.each {|param| invalid_message = invalid_message+param+" "}
 			return invalid_message
