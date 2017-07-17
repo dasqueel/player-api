@@ -39,19 +39,20 @@ for ubuntu you have to set up a password for the default "postgres" user
 sudo -u postgres psql postgres
 ```
 
-while in psql term
+while in psql term, type and hit enter
 
 ```
 \password postgres
 ```
 
-and quit postgres term
+type in new password and quit postgres term
 
 ```
 \q
 ```
 
-now change user from nil to posgres and password to nil to your password you just typed
+now have to update postgres con objects attributes in api.rb and api_to_postgre.rb
+change user from nil to posgres and password from nil to your password you just typed
 con line ~14 in api.rb
 con line ~17 in api_to_postgres.rb
 (would user config file so you only have to change once, will figure that out later)
