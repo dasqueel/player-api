@@ -5,7 +5,7 @@ things to improve
 =end
 
 require 'sinatra'
-require 'sinatra/reloader'
+#require 'sinatra/reloader'
 require 'pg'
 
 con = PG.connect :dbname => "players"
