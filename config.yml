@@ -1,2 +1,3 @@
 dbname: "players"
-dbuser: "squeel"
+dbuser: "postgres"
+dbpassword: "<password>"

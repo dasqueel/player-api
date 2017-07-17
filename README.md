@@ -27,8 +27,39 @@ sudo apt-get install postgresql postgresql-contrib
 
 3) create a postgres database named "players"
 
+for mac it should be simply typing in:
+
 ```
 createdb players
+```
+
+for ubuntu you have to set up a password for the default "postgres" user
+
+```
+sudo -u postgres psql postgres
+```
+
+while in psql term
+
+```
+\password postgres
+```
+
+and quit postgres term
+
+```
+\q
+```
+
+now change user from nil to posgres and password to nil to your password you just typed
+con line ~14 in api.rb
+con line ~17 in api_to_postgres.rb
+(would user config file so you only have to change once, will figure that out later)
+
+something like this
+
+```
+con = PG.connect :dbname => "players", :user => "postgres", :password => "<password>"
 ```
 
 

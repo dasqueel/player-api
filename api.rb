@@ -8,7 +8,7 @@ require 'sinatra'
 #require 'sinatra/reloader'
 require 'pg'
 
-con = PG.connect :dbname => "players"
+con = PG.connect :dbname => "players", :user => nil, :password => nil
 
 get '/sports/:sport' do
 	content_type :json

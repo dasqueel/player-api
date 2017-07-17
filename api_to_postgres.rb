@@ -14,7 +14,7 @@ require 'unirest'
 require 'pg'
 sports = ['Baseball','Football','Basketball']
 
-con = PG.connect :dbname => 'players'
+con = PG.connect :dbname => "players", :user => nil, :password => nil
 
 #loop through each sport and create its own table with player members
 sports.each {|sport|
